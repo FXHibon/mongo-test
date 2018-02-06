@@ -20,19 +20,18 @@ class BookRepoTest extends DbAwareTest {
       }
 
       "have one result" in {
-        val id = UUID.randomUUID()
-        val now = Instant.now()
-        val bookDocument = Document(
-          "_id" -> id,
-          "name" -> "Lord of the rings",
-          "author" -> "J.K Rowling",
-          "createdAt" -> now)
+        val testBook = Book(
+          _id = UUID.randomUUID(),
+          name = "Lord of the rings",
+          author = "J.K Rowling",
+          createdAt = Instant.now(),
+          n = Nested("lol"))
 
         for {
-          _ <- insert(bookDocument)
-          optBook <- bookRepo.findBook(id)
+          _ <- bookRepo.addBook(testBook)
+          optBook <- bookRepo.findBook(testBook._id)
         } yield {
-          optBook must contain(Book(id, "Lord of the rings", "J.K Rowling", now))
+          optBook must contain(testBook)
         }
       }
 
@@ -50,8 +49,8 @@ class BookRepoTest extends DbAwareTest {
         for {
           _ <- Future.sequence(
             (1 to 100)
-              .map(i => Document("_id" -> UUID.randomUUID(), "name" -> s"Book $i", "author" -> s"author $i", "createdAt" -> Instant.now()))
-              .map(insert))
+              .map(i => Book(UUID.randomUUID(), s"name $i", s"author $i", Instant.now(), Nested(s"n$i")))
+              .map(bookRepo.addBook))
           books <- bookRepo.findBooks()
         } yield books must have size 100
       }
@@ -66,19 +65,18 @@ class BookRepoTest extends DbAwareTest {
 
       "delete one document" in {
 
-        val id = UUID.randomUUID()
-        val now = Instant.now()
-        val bookDocument = Document(
-          "_id" -> id,
-          "name" -> "Lord of the rings",
-          "author" -> "J.K Rowling",
-          "createdAt" -> now)
+        val testBook = Book(
+          _id = UUID.randomUUID(),
+          name = "Lord of the rings",
+          author = "J.K Rowling",
+          createdAt = Instant.now(),
+          Nested("lol"))
 
         for {
-          _ <- insert(bookDocument)
-          deletedBook <- bookRepo.deleteBook(id)
+          _ <- bookRepo.addBook(testBook)
+          deletedBook <- bookRepo.deleteBook(testBook._id)
         } yield {
-          deletedBook mustBe Book(id, "Lord of the rings", "J.K Rowling", now)
+          deletedBook mustBe testBook
         }
       }
     }

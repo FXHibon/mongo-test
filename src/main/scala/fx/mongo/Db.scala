@@ -19,7 +19,7 @@ class Db(implicit conf: Config) extends CustomCodecs {
   private val codecRegistry: CodecRegistry = fromRegistries(
     fromCodecs(instantCodec),
     DEFAULT_CODEC_REGISTRY,
-    fromProviders(classOf[Book]))
+    fromProviders(classOf[Book], classOf[Nested]))
 
   // connect to server
   private val mongoClient: MongoClient = MongoClient(conf.getString("db.uri"))

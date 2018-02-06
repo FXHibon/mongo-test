@@ -13,7 +13,7 @@ import scala.concurrent.duration._
 /**
  * clean db between each tests
  */
-abstract class DbAwareTest extends AsyncWordSpec with AppModule with MustMatchers with BeforeAndAfterEach with BsonHelper {
+abstract class DbAwareTest extends AsyncWordSpec with AppModule with MustMatchers with BeforeAndAfterEach {
 
   override val config: Config = ConfigFactory.load("test.application")
 
@@ -22,6 +22,4 @@ abstract class DbAwareTest extends AsyncWordSpec with AppModule with MustMatcher
   override def beforeEach(): Unit = {
     Await.ready(col.deleteMany(notEqual("_id", 1)).toFuture(), 1 second)
   }
-
-  def insert(d: Document): Future[Completed] = col.insertOne(d).toFuture()
 }

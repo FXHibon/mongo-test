@@ -10,4 +10,6 @@ import java.util.UUID
  * @param author
  * @param createdAt
  */
-case class Book(_id: UUID, name: String, author: String, createdAt: Instant)
+case class Book(_id: UUID, name: String, author: String, createdAt: Instant, n: Nested)
+
+case class Nested(_id: String)
