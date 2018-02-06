@@ -59,7 +59,7 @@ class BookRepoTest extends DbAwareTest {
 
     "deleteBook" must {
       "do nothing" in {
-        bookRepo.deleteBook(UUID.randomUUID()).map(fail()).recover {
+        bookRepo.deleteBook(UUID.randomUUID()).map(b => fail(s"should not have return $b")).recover {
           case err => err mustBe a[NoSuchElementException]
         }
       }
